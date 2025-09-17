@@ -1,6 +1,6 @@
 # Prototipo del proyecto
 
-Trabajando con Lovable.
+Trabajando con Lovable. Estaríamos usando este repositorio para mantener registro del versionado y la sincronización en GitHub del [proyecto de Lovable](https://github.com/niakito/casino-uni-planner) solo para lo que es la manipulación del prototipo; me da miedo mover algo directamente por que está sincronizado con lovable. . . pero para que tengamos la copia guardada aquí tb por si las mosca.s
 
 Link de colaboración como editor: [Lovable](https://lovable.dev/projects/172b54f6-a1ca-4d6d-97fa-b6338eb72029?magic_link=mc_463dd7b2-fc07-470f-9baf-37b22090e989)
 
