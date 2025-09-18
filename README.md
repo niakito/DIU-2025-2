@@ -4,31 +4,13 @@ Trabajando con Lovable. Estaríamos usando este repositorio para mantener regist
 
 Link de colaboración como editor: [Lovable](https://lovable.dev/projects/172b54f6-a1ca-4d6d-97fa-b6338eb72029?magic_link=mc_463dd7b2-fc07-470f-9baf-37b22090e989)
 
-** ELIMINAR de la barra de navegación las funciones principales pq es solo una pantalla asiq no sirven**
+**ELIMINAR de la barra de navegación las funciones principales pq es solo una pantalla asiq no sirven**
 
-## 1.0.0
-_17/09/2025_
+**PROMPT 12PM**
 
-Detalle de las funcionalidades que incluye y su estructura actual. 
+## V1.0.0
+La versión 1.0.0 incorpora un sistema de reservas de almuerzos con menús normal o hipocalórico, que deben gestionarse con al menos 48 horas de anticipación. La plataforma ofrece un calendario interactivo en vista mensual, donde los usuarios pueden visualizar y seleccionar uno o varios días para realizar reservas, así como consultar los menús disponibles en cada jornada.
 
-### Funcionalidades
+Además, permite administrar fácilmente las reservas mediante un historial que incluye opciones de edición y cancelación individual o múltiple. El sistema también integra un perfil de usuario con configuración de preferencias predeterminadas para agilizar el proceso de reserva.
 
-+ Sistema de reservas con menús normal o hipocalórico y regla de 48 horas
-+ Calendario interactivo con vista mensual y reservas realizadas visibles
-+ Calendario para consultar y reservar el menú de un determinado día
-+ Selección de múltiples días para realizar varias reservas simultáneamente
-+ Historial completo con opciones de edición y cancelación de reservas
-+ Edición de reservas
-+ Cancelación de una o varias reservas con su confirmación correspondiente
-+ Perfil de usuario
-+ Configuración y autorrellenado de las preferencias predeterminadas del usuario
-
-### Interfaz 
-
-La interfaz consiste de los siguientes elementos:
-
-- **Barra superior**: En la esquina derecha se encuentra el ícono del perfil del usuario; presionandolo se puede visualizar su perfil y realizar la configuración de preferencia predeterminada. En la esquina izquierda está el logo del casino para volver a la página principal.
-
-+ **Página principal**: El elemento principal y central corresponde al calendario interactivo, el cual permite ver los dias disponibles para reservar y destaca los en que el usuario tiene una reserva realizada. Si se clickea en un dia, se pueden ver los menús de dicha jornada y se da la opción de reservar uno de ellos.
-<br> A la derecha hay una barra que contiene el detalle de todas las reservas vigentes; allí se pueden modificar o eliminar individualmente, y apretando sobre una de ellas se pueden seleccionar para la cancelación múltiple. En la parte superior de la barra, se pueda acceder a la funcion de seleccionar varios dias para reserva mediante el ícono más <+>, y se pueden seleccionar todas las reservas para su cancelación mediante el botón <Seleccionar todo>. Bajo la barra hay un historial de reservas realizadas.
-
+La interfaz se organiza en una página principal con el calendario como elemento central, una barra lateral para gestionar las reservas vigentes e historial, y una barra superior con accesos al logo del casino y al perfil del usuario.
