@@ -4,7 +4,7 @@ Trabajando con Lovable. Estaríamos usando este repositorio para mantener regist
 
 Link de colaboración como editor: [Lovable](https://lovable.dev/projects/172b54f6-a1ca-4d6d-97fa-b6338eb72029?magic_link=mc_463dd7b2-fc07-470f-9baf-37b22090e989)
 
-**ELIMINAR de la barra de navegación las funciones principales pq es solo una pantalla asiq no sirven**
+**AÑADIR transicion en la eliminacion de notificaciones: quiero que se deslicen. PEDIR q haga funcionar el historial. CONSIDERAR la reserva automatizada**
 
 **PROMPT 12PM**
 
