@@ -4,6 +4,10 @@ Trabajando con Lovable. Estaríamos usando este repositorio para mantener regist
 
 Link de colaboración como editor: [Lovable](https://lovable.dev/projects/172b54f6-a1ca-4d6d-97fa-b6338eb72029?magic_link=mc_463dd7b2-fc07-470f-9baf-37b22090e989)
 
+Link del deploy del prototipo: [Netlify](https://app.netlify.com/projects/casino-universidad/overview)
+
+Link del prototipo: [Casino USM](https://casino-universidad.netlify.app/)
+
 ## ヽ(￣д￣;)ノ=3=3=3	
 + **HACER funcionar el historial**
 + **CONSIDERAR la reserva automatizada**
