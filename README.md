@@ -1,7 +1,7 @@
 Repositorio del proyecto Casino USM, para el ramo Diseño de Interfaces Usuarias 2025-2.
 
 ## Estructura
-.
+.           
 ├── 1.0.0    
 │   ├── 1ra_Entrega    
 │   │   ├── README.md            
