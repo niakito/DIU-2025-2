@@ -2,21 +2,21 @@ Repositorio del proyecto Casino USM, para el ramo Diseño de Interfaces Usuarias
 
 ## Estructura
 .
-├── 1.0.0
-│   ├── 1ra_Entrega
-│   │   ├── README.md
-│   │   ├── src
-│   │   │   └── . . .
-│   │   ├── Lovable . . . 
-│   ├── Modificaciones.md
-│   ├── README.md
-│   └── V1.0.0.md
-
-├── 2.0.0
-│   ├── README.md
-│   └── V2.0.0.md
-
-└── README.md
+├── 1.0.0    
+│   ├── 1ra_Entrega    
+│   │   ├── README.md            
+│   │   ├── src         
+│   │   │   └── . . .           
+│   │   ├── Lovable . . .           
+│   ├── Modificaciones.md        
+│   ├── README.md        
+│   └── V1.0.0.md          
+  
+├── 2.0.0           
+│   ├── README.md      
+│   └── V2.0.0.md           
+            
+└── README.md          
 
 ### 1.0.0
 La carpeta contiene los archivos relevantes para la primera entrega del proyecto.
