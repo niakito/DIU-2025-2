@@ -23,8 +23,7 @@ interface MenuReservationModalProps {
   selectedDates?: Date[];
   onReserve: (date: Date, menuType: 'normal' | 'hypocaloric') => void;
   onReserveMultiple?: (dates: Date[], menuType: 'normal' | 'hypocaloric') => void;
-  editingReservation?: { id: string; date: Date; menuType: 'normal' | 'hypocaloric' } | null;
-  onUpdateReservation?: (reservationId: string, menuType: 'normal' | 'hypocaloric') => void;
+
 }
 
 export const MenuReservationModal = ({ 
@@ -34,22 +33,17 @@ export const MenuReservationModal = ({
   selectedDates = [],
   onReserve,
   onReserveMultiple,
-  editingReservation,
-  onUpdateReservation
+
 }: MenuReservationModalProps) => {
   const { user } = useUser();
   const [selectedMenuType, setSelectedMenuType] = useState<'normal' | 'hypocaloric'>('normal');
 
-  // Auto-llenar con la preferencia del usuario al abrir el modal o con la reserva existente
+  // Auto-llenar con la preferencia del usuario al abrir el modal
   useEffect(() => {
-    if (isOpen) {
-      if (editingReservation) {
-        setSelectedMenuType(editingReservation.menuType);
-      } else if (user.preferences.defaultMenuType) {
-        setSelectedMenuType(user.preferences.defaultMenuType);
-      }
+    if (isOpen && user.preferences.defaultMenuType) {
+      setSelectedMenuType(user.preferences.defaultMenuType);
     }
-  }, [isOpen, user.preferences.defaultMenuType, editingReservation]);
+  }, [isOpen, user.preferences.defaultMenuType]);
 
   const formatDate = (date: Date) => {
     return date.toLocaleDateString('es-ES', { 
@@ -61,10 +55,7 @@ export const MenuReservationModal = ({
   };
 
   const handleReserve = () => {
-    if (editingReservation && onUpdateReservation) {
-      onUpdateReservation(editingReservation.id, selectedMenuType);
-      onClose();
-    } else if (selectedDates.length > 0 && onReserveMultiple) {
+    if (selectedDates.length > 0 && onReserveMultiple) {
       onReserveMultiple(selectedDates, selectedMenuType);
       onClose();
     } else if (selectedDate) {
@@ -74,8 +65,7 @@ export const MenuReservationModal = ({
   };
 
   const isMultipleReservation = selectedDates.length > 0;
-  const displayDate = editingReservation?.date || selectedDate;
-  const dateToUse = displayDate || (selectedDates.length > 0 ? selectedDates[0] : null);
+  const dateToUse = selectedDate || (selectedDates.length > 0 ? selectedDates[0] : null);
 
   if (!dateToUse) return null;
 
@@ -103,14 +93,13 @@ export const MenuReservationModal = ({
         <DialogHeader>
           <DialogTitle className="flex items-center text-primary">
             <Utensils className="mr-2 h-5 w-5" />
-            {editingReservation ? 'Modificar Reserva' : 
-             isMultipleReservation ? 'Reservar Múltiples Días' : 'Reservar Almuerzo'}
+            {isMultipleReservation ? 'Reservar Múltiples Días' : 'Reservar Almuerzo'}
           </DialogTitle>
           <DialogDescription>
             {isMultipleReservation ? (
               `${selectedDates.length} días seleccionados`
             ) : (
-              formatDate(displayDate!)
+              formatDate(dateToUse!)
             )}
           </DialogDescription>
         </DialogHeader>
@@ -211,8 +200,7 @@ export const MenuReservationModal = ({
             </Button>
             <Button onClick={handleReserve} className="flex-1 bg-gradient-primary hover:bg-primary-light">
               <Check className="mr-2 h-4 w-4" />
-              {editingReservation ? 'Actualizar' : 
-               isMultipleReservation ? `Reservar ${selectedDates.length} días` : 'Confirmar Reserva'}
+              {isMultipleReservation ? `Reservar ${selectedDates.length} días` : 'Confirmar Reserva'}
             </Button>
           </div>
         </div>
