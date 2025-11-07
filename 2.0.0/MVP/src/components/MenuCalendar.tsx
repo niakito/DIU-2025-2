@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { ChevronLeft, ChevronRight, UtensilsCrossed, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -24,51 +24,33 @@ export const MenuCalendar = ({
   selectedDates = [],
   onToggleDateSelection
 }: MenuCalendarProps) => {
-  // Función para obtener el lunes de la semana actual
-  const getMondayOfCurrentWeek = (date: Date) => {
-    const current = new Date(date);
-    const day = current.getDay();
-    const diff = current.getDate() - day + (day === 0 ? -6 : 1); // Ajustar para que lunes sea el primer día
-    return new Date(current.setDate(diff));
-  };
-
-  const [currentWeekStart, setCurrentWeekStart] = useState(() => getMondayOfCurrentWeek(new Date()));
+  const [currentDate, setCurrentDate] = useState(new Date());
   
   const today = new Date();
+  const startOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+  const endOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
+  const startCalendar = new Date(startOfMonth);
   
-  // Generar exactamente 28 días (4 semanas) empezando desde currentWeekStart
+  // Ajustar al lunes más cercano (día 1)
+  const dayOfWeek = startOfMonth.getDay();
+  const daysToMonday = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
+  startCalendar.setDate(startCalendar.getDate() + daysToMonday);
+  
   const days = [];
-  for (let i = 0; i < 28; i++) {
-    const date = new Date(currentWeekStart);
-    date.setDate(date.getDate() + i);
-    days.push(date);
+  const current = new Date(startCalendar);
+  
+  // Calcular semanas necesarias para cubrir el mes (solo días laborables)
+  const weeksNeeded = Math.ceil((endOfMonth.getDate() - startOfMonth.getDate() + 1 + (startOfMonth.getDay() === 0 ? 6 : startOfMonth.getDay() - 1)) / 5);
+  
+  for (let i = 0; i < weeksNeeded * 7; i++) {
+    days.push(new Date(current));
+    current.setDate(current.getDate() + 1);
   }
 
-  // Efecto para actualizar automáticamente el calendario cada lunes
-  useEffect(() => {
-    const updateCalendar = () => {
-      const now = new Date();
-      const currentMondayOfWeek = getMondayOfCurrentWeek(now);
-      
-      // Solo actualizar si estamos en un lunes diferente al actual
-      if (currentMondayOfWeek.toDateString() !== currentWeekStart.toDateString()) {
-        setCurrentWeekStart(currentMondayOfWeek);
-      }
-    };
-
-    // Verificar inmediatamente
-    updateCalendar();
-
-    // Verificar cada hora si cambió la semana
-    const interval = setInterval(updateCalendar, 60 * 60 * 1000);
-    
-    return () => clearInterval(interval);
-  }, [currentWeekStart]);
-
-  const navigateWeek = (direction: 'prev' | 'next') => {
-    const newWeekStart = new Date(currentWeekStart);
-    newWeekStart.setDate(newWeekStart.getDate() + (direction === 'next' ? 7 : -7));
-    setCurrentWeekStart(newWeekStart);
+  const navigateMonth = (direction: 'prev' | 'next') => {
+    const newDate = new Date(currentDate);
+    newDate.setMonth(newDate.getMonth() + (direction === 'next' ? 1 : -1));
+    setCurrentDate(newDate);
   };
 
   const getReservationForDate = (date: Date) => {
@@ -98,19 +80,6 @@ export const MenuCalendar = ({
     return diffDays >= 2; // Mínimo 48 horas de anticipación
   };
 
-  // Función para formatear el rango de fechas para el header
-  const getDateRangeString = () => {
-    const startDate = new Date(currentWeekStart);
-    const endDate = new Date(currentWeekStart);
-    endDate.setDate(endDate.getDate() + 27);
-    
-    const formatOptions: Intl.DateTimeFormatOptions = { day: 'numeric', month: 'long' };
-    const startStr = startDate.toLocaleDateString('es-ES', formatOptions);
-    const endStr = endDate.toLocaleDateString('es-ES', formatOptions);
-    
-    return `${startStr} - ${endStr}`;
-  };
-
   const isDateSelected = (date: Date) => {
     return selectedDates.some(selectedDate => 
       selectedDate.toDateString() === date.toDateString()
@@ -122,7 +91,7 @@ export const MenuCalendar = ({
     "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
   ];
 
-  const dayNames = ["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"];
+  const dayNames = ["Lun", "Mar", "Mié", "Jue", "Vie"];
 
   return (
     <Card className="w-full shadow-calendar">
@@ -131,7 +100,7 @@ export const MenuCalendar = ({
         <div className="flex items-center justify-between mb-6">
           <div>
             <h2 className="text-2xl font-bold text-primary">
-              {getDateRangeString()}
+              {monthNames[currentDate.getMonth()]} {currentDate.getFullYear()}
             </h2>
             {isMultiSelectMode && (
               <p className="text-sm text-muted-foreground mt-1">
@@ -143,14 +112,14 @@ export const MenuCalendar = ({
             <Button
               variant="outline"
               size="icon"
-              onClick={() => navigateWeek('prev')}
+              onClick={() => navigateMonth('prev')}
             >
               <ChevronLeft className="h-4 w-4" />
             </Button>
             <Button
               variant="outline"
               size="icon"
-              onClick={() => navigateWeek('next')}
+              onClick={() => navigateMonth('next')}
             >
               <ChevronRight className="h-4 w-4" />
             </Button>
@@ -158,7 +127,7 @@ export const MenuCalendar = ({
         </div>
 
         {/* Days of week header */}
-        <div className="grid grid-cols-7 gap-2 mb-4">
+        <div className="grid grid-cols-5 gap-2 mb-4">
           {dayNames.map((day) => (
             <div key={day} className="p-2 text-center text-sm font-medium text-muted-foreground">
               {day}
@@ -167,12 +136,17 @@ export const MenuCalendar = ({
         </div>
 
         {/* Calendar days */}
-        <div className="grid grid-cols-7 gap-2">
-          {days.map((date, index) => {
+        <div className="grid grid-cols-5 gap-2">
+          {days.filter(date => {
+            // Solo mostrar lunes a viernes (1-5)
+            const dayOfWeek = date.getDay();
+            return dayOfWeek >= 1 && dayOfWeek <= 5;
+          }).map((date, index) => {
             const reservation = getReservationForDate(date);
             const menuForDay = getMenuForDate(date);
+            const isCurrentMonth = date.getMonth() === currentDate.getMonth();
             const isToday = date.toDateString() === today.toDateString();
-            const canReserve = isReservable(date);
+            const canReserve = isReservable(date) && isCurrentMonth;
             const isPastDate = date < today && !isToday;
             const isSelected = isDateSelected(date);
 
@@ -181,14 +155,15 @@ export const MenuCalendar = ({
                 className={cn(
                   "min-h-20 p-2 border border-border rounded-lg transition-all duration-200",
                   {
-                    "bg-gradient-subtle": !reservation && !isSelected,
+                    "bg-muted/30": !isCurrentMonth,
+                    "bg-gradient-subtle": isCurrentMonth && !reservation && !isSelected,
                     "bg-gradient-reserved text-reserved-foreground": reservation?.status === 'confirmed',
                     "bg-pending text-pending-foreground": reservation?.status === 'pending',
                     "ring-2 ring-primary": isToday || (isMultiSelectMode && isSelected),
                     "bg-primary text-primary-foreground": isMultiSelectMode && isSelected,
-                    "opacity-50 cursor-not-allowed": isPastDate || (isMultiSelectMode && reservation) || (!canReserve && !reservation),
+                    "opacity-50 cursor-not-allowed": isPastDate || (isMultiSelectMode && reservation) || (!canReserve && isCurrentMonth && !reservation),
                     "cursor-pointer hover:shadow-card hover:scale-105": canReserve || reservation,
-                    "cursor-not-allowed": (!canReserve && !reservation) || isPastDate,
+                    "cursor-not-allowed": (!canReserve && isCurrentMonth && !reservation) || isPastDate,
                     "hover:bg-accent": canReserve && !reservation && !isMultiSelectMode,
                     "hover:bg-primary/80": isMultiSelectMode && canReserve && !reservation
                   }
@@ -196,15 +171,16 @@ export const MenuCalendar = ({
                 onClick={() => {
                   if (isMultiSelectMode && canReserve && !reservation) {
                     onToggleDateSelection?.(date);
-                  } else if (reservation && !isMultiSelectMode) {
-                    onReservationClick(reservation);
                   } else if (canReserve && !isMultiSelectMode) {
                     onDateClick(date);
                   }
                 }}
               >
                 <div className="flex items-start justify-between">
-                  <span className="text-sm font-medium">
+                  <span className={cn(
+                    "text-sm font-medium",
+                    !isCurrentMonth && "text-muted-foreground"
+                  )}>
                     {date.getDate()}
                   </span>
                   {reservation && (

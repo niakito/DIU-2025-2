@@ -5,14 +5,17 @@ Repositorio del proyecto Casino USM, para el ramo Diseño de Interfaces Usuarias
 ├── 1.0.0    
 │   ├── 1ra_Entrega    
 │   │   ├── README.md            
-│   │   ├── src         
-│   │   │   └── . . .           
-│   │   ├── Lovable . . .           
+│   │   ├── Lovable . . .          
+│   │   │   └── . . .               
 │   ├── Modificaciones.md        
 │   ├── README.md        
 │   └── V1.0.0.md          
   
 ├── 2.0.0           
+│   ├── MVP       
+│   │   ├── README.md            
+│   │   ├── Lovable . . .          
+│   │   │   └── . . .                       
 │   ├── README.md      
 │   └── V2.0.0.md           
             
@@ -27,4 +30,5 @@ La carpeta contiene los archivos relevantes para la primera entrega del proyecto
 
 ### 2.0.0
 
-
+- MVP: Carpeta contenedora del Producto Mínimo Viable.
+- V2.0.0: Información de la segunda versión del proyecto, con la especificación de los cambios realizados.
