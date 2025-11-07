@@ -42,32 +42,52 @@ export const Header = () => {
 
 
           {/* User Profile */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="h-10 w-10 rounded-full p-0">
-                <Avatar className="h-9 w-9">
-                  <AvatarImage src={user.avatar} alt={user.name} />
-                  <AvatarFallback className="text-sm bg-gradient-primary text-primary-foreground">
-                    {getInitials(user.name)}
-                  </AvatarFallback>
-                </Avatar>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-56">
-              <DropdownMenuItem onClick={() => { setProfileView('profile'); setIsProfileOpen(true); }}>
-                <User className="mr-2 h-4 w-4" />
-                <span>Mi Perfil</span>
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => { setProfileView('preferences'); setIsProfileOpen(true); }}>
-                <Settings className="mr-2 h-4 w-4" />
-                <span>Preferencias</span>
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => { setProfileView('menu'); setIsProfileOpen(true); }}>
-                <Menu className="mr-2 h-4 w-4" />
-                <span>Menú</span>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <div className="flex items-center gap-4">
+            {/* Quick Preferences Button */}
+            <Button 
+              variant="outline" 
+              size="sm"
+              onClick={() => { setProfileView('preferences'); setIsProfileOpen(true); }}
+              className="hidden md:flex items-center gap-2 bg-accent text-primary hover:bg-primary hover:text-accent border-primary/20"
+            >
+              <Settings className="h-4 w-4" />
+              <span className="text-sm font-medium">
+                Preferencia de Menú: {user.preferences.defaultMenuType === 'normal' ? 'Normal' : 'Hipocalórico'}
+              </span>
+            </Button>
+
+            {/* User Dropdown */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="flex items-center gap-2 h-auto px-3 py-2">
+                  <Avatar className="h-9 w-9">
+                    <AvatarImage src={user.avatar} alt={user.name} />
+                    <AvatarFallback className="text-sm bg-gradient-primary text-primary-foreground">
+                      {getInitials(user.name)}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="hidden md:flex flex-col items-start">
+                    <span className="text-sm font-medium">{user.name}</span>
+                    <span className="text-xs text-muted-foreground">{user.email}</span>
+                  </div>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56">
+                <DropdownMenuItem onClick={() => { setProfileView('profile'); setIsProfileOpen(true); }}>
+                  <User className="mr-2 h-4 w-4" />
+                  <span>Mi Perfil</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => { setProfileView('preferences'); setIsProfileOpen(true); }}>
+                  <Settings className="mr-2 h-4 w-4" />
+                  <span>Preferencias de Menú</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => { setProfileView('menu'); setIsProfileOpen(true); }}>
+                  <Menu className="mr-2 h-4 w-4" />
+                  <span>Información del Menú</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
         </div>
       </div>
       

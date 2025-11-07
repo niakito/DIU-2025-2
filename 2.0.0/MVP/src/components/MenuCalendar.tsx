@@ -1,28 +1,28 @@
 import { useState } from "react";
-import { ChevronLeft, ChevronRight, UtensilsCrossed, Clock } from "lucide-react";
+import { ChevronLeft, ChevronRight, UtensilsCrossed, Clock, CalendarRange } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 import { Reservation } from "@/types/casino";
 
 interface MenuCalendarProps {
   reservations: Reservation[];
   onDateClick: (date: Date) => void;
-  onReservationClick: (reservation: Reservation) => void;
   isMultiSelectMode?: boolean;
   selectedDates?: Date[];
   onToggleDateSelection?: (date: Date) => void;
+  onSelectDateRange?: () => void;
 }
 
 export const MenuCalendar = ({ 
   reservations, 
   onDateClick, 
-  onReservationClick,
   isMultiSelectMode = false,
   selectedDates = [],
-  onToggleDateSelection
+  onToggleDateSelection,
+  onSelectDateRange
 }: MenuCalendarProps) => {
   const [currentDate, setCurrentDate] = useState(new Date());
   
@@ -98,7 +98,7 @@ export const MenuCalendar = ({
       <CardContent className="p-6">
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
-          <div>
+          <div className="flex-1">
             <h2 className="text-2xl font-bold text-primary">
               {monthNames[currentDate.getMonth()]} {currentDate.getFullYear()}
             </h2>
@@ -209,61 +209,58 @@ export const MenuCalendar = ({
             );
 
             return (
-              <Tooltip key={index}>
-                <TooltipTrigger asChild>
-                  {dayContent}
-                </TooltipTrigger>
-                <TooltipContent className="max-w-xs p-3">
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      <h4 className="font-semibold text-sm">
-                        {date.toLocaleDateString('es-ES', { 
-                          weekday: 'long', 
-                          day: 'numeric', 
-                          month: 'long' 
-                        })}
-                      </h4>
-                      {reservation && (
-                        <Badge variant={reservation.status === 'confirmed' ? 'default' : 'secondary'} className="text-xs">
-                          {reservation.status === 'confirmed' ? 'Confirmado' : 'Pendiente'}
-                        </Badge>
-                      )}
-                    </div>
-                    <div className="text-xs space-y-2">
-                      <div className="space-y-1">
-                        <div className="flex items-center gap-2">
-                          <UtensilsCrossed className="h-3 w-3" />
-                          <span className="font-medium">Menú Normal:</span>
-                        </div>
-                        <p className="pl-5 text-muted-foreground">{menuForDay.normal}</p>
+              <TooltipProvider key={index}>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    {dayContent}
+                  </TooltipTrigger>
+                  <TooltipContent className="max-w-xs p-3">
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between">
+                        <h4 className="font-semibold text-sm">
+                          {date.toLocaleDateString('es-ES', { 
+                            weekday: 'long', 
+                            day: 'numeric', 
+                            month: 'long' 
+                          })}
+                        </h4>
+                        {reservation && (
+                          <Badge variant={reservation.status === 'confirmed' ? 'default' : 'secondary'} className="text-xs">
+                            {reservation.status === 'confirmed' ? 'Confirmado' : 'Pendiente'}
+                          </Badge>
+                        )}
                       </div>
-                      
-                      <div className="space-y-1">
-                        <div className="flex items-center gap-2">
-                          <UtensilsCrossed className="h-3 w-3" />
-                          <span className="font-medium">Menú Hipocalórico:</span>
+                      <div className="text-xs space-y-2">
+                        <div className="space-y-1">
+                          <div className="flex items-center gap-2">
+                            <UtensilsCrossed className="h-3 w-3" />
+                            <span className="font-medium">Menú Normal:</span>
+                          </div>
+                          <p className="pl-5 text-muted-foreground">{menuForDay.normal}</p>
                         </div>
-                        <p className="pl-5 text-muted-foreground">{menuForDay.hypocaloric}</p>
+                        
+                        <div className="space-y-1">
+                          <div className="flex items-center gap-2">
+                            <UtensilsCrossed className="h-3 w-3" />
+                            <span className="font-medium">Menú Hipocalórico:</span>
+                          </div>
+                          <p className="pl-5 text-muted-foreground">{menuForDay.hypocaloric}</p>
+                        </div>
+                        
+                        {reservation && (
+                          <div className="mt-2 p-2 bg-muted rounded text-xs text-muted-foreground">
+                            Ya tienes reserva para este día
+                          </div>
+                        )}
                       </div>
-                      
-                      {!reservation && canReserve && (
-                        <div className="mt-2 p-2 bg-primary/10 rounded text-xs text-primary">
-                          Haz clic para reservar
-                        </div>
-                      )}
-                      
-                      {reservation && (
-                        <div className="mt-2 p-2 bg-muted rounded text-xs text-muted-foreground">
-                          Ya tienes reserva para este día
-                        </div>
-                      )}
                     </div>
-                  </div>
-                </TooltipContent>
-              </Tooltip>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             );
           })}
         </div>
+
       </CardContent>
     </Card>
   );

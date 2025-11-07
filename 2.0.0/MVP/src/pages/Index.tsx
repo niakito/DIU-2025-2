@@ -59,12 +59,6 @@ const Index = () => {
     setIsModalOpen(true);
   };
 
-  const handleReservationClick = (reservation: Reservation) => {
-    toast({
-      title: "Reserva seleccionada",
-      description: `${reservation.date.toLocaleDateString('es-ES')} - ${reservation.menuType}`,
-    });
-  };
 
   const handleNewReservation = () => {
     // No permitir reservas para el día actual por la regla de 48h
@@ -252,7 +246,6 @@ const Index = () => {
                 <MenuCalendar
                   reservations={reservations}
                   onDateClick={handleDateClick}
-                  onReservationClick={handleReservationClick}
                   isMultiSelectMode={isMultiSelectMode}
                   selectedDates={selectedDates}
                   onToggleDateSelection={handleToggleDateSelection}

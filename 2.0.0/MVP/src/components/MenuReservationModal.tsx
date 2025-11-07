@@ -23,7 +23,8 @@ interface MenuReservationModalProps {
   selectedDates?: Date[];
   onReserve: (date: Date, menuType: 'normal' | 'hypocaloric') => void;
   onReserveMultiple?: (dates: Date[], menuType: 'normal' | 'hypocaloric') => void;
-
+  editingReservation?: { id: string; date: Date; menuType: 'normal' | 'hypocaloric' } | null;
+  onUpdateReservation?: (reservationId: string, menuType: 'normal' | 'hypocaloric') => void;
 }
 
 export const MenuReservationModal = ({ 
@@ -33,7 +34,8 @@ export const MenuReservationModal = ({
   selectedDates = [],
   onReserve,
   onReserveMultiple,
-
+  editingReservation,
+  onUpdateReservation
 }: MenuReservationModalProps) => {
   const { user } = useUser();
   const [selectedMenuType, setSelectedMenuType] = useState<'normal' | 'hypocaloric'>('normal');
@@ -198,6 +200,18 @@ export const MenuReservationModal = ({
             <Button variant="outline" onClick={onClose} className="flex-1">
               Cancelar
             </Button>
+            {editingReservation && onDeleteReservation && (
+              <Button 
+                variant="destructive" 
+                onClick={() => {
+                  onDeleteReservation(editingReservation.id);
+                  onClose();
+                }}
+                className="flex-1"
+              >
+                Eliminar
+              </Button>
+            )}
             <Button onClick={handleReserve} className="flex-1 bg-gradient-primary hover:bg-primary-light">
               <Check className="mr-2 h-4 w-4" />
               {isMultipleReservation ? `Reservar ${selectedDates.length} días` : 'Confirmar Reserva'}
