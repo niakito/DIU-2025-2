@@ -170,24 +170,26 @@ export const ReservationSidebar = ({
                           <Button
                             size="icon"
                             variant="ghost"
-                            className="h-6 w-6"
+                            className="h-6 w-auto px-2 text-primary hover:text-primary-foreground hover:bg-primary"
                             onClick={(e) => {
                               e.stopPropagation();
                               onEditReservation(reservation);
                             }}
                           >
                             <Edit className="h-3 w-3" />
+                            <span className="ml-1 text-xs">Modificar</span>
                           </Button>
                           <Button
                             size="icon"
                             variant="ghost"
-                            className="h-6 w-6 text-destructive"
+                            className="h-6 w-auto px-2 text-destructive hover:text-destructive-foreground hover:bg-destructive"
                             onClick={(e) => {
                               e.stopPropagation();
                               onDeleteReservation(reservation.id);
                             }}
                           >
                             <Trash2 className="h-3 w-3" />
+                            <span className="ml-1 text-xs">Eliminar</span>
                           </Button>
                         </div>
                       </div>
