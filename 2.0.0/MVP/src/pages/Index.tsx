@@ -10,7 +10,8 @@ import { Reservation } from "@/types/casino";
 import { toast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { Plus } from "lucide-react";
+import { Plus, CalendarRange } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
 
 const Index = () => {
   const [reservations, setReservations] = useState<Reservation[]>([
@@ -59,6 +60,9 @@ const Index = () => {
     setIsModalOpen(true);
   };
 
+  const handleReservationClick = (reservation: Reservation) => {
+      handleEditReservation(reservation);
+    };
 
   const handleNewReservation = () => {
     // No permitir reservas para el día actual por la regla de 48h
@@ -79,9 +83,37 @@ const Index = () => {
       if (isSelected) {
         return prev.filter(d => d.toDateString() !== date.toDateString());
       } else {
-        return [...prev, date];
+        return [...prev, date].sort((a, b) => a.getTime() - b.getTime());
       }
     });
+  };
+
+  const handleSelectDateRange = () => {
+    if (selectedDates.length < 2) return;
+    
+    const sortedDates = [...selectedDates].sort((a, b) => a.getTime() - b.getTime());
+    const firstDate = sortedDates[0];
+    const lastDate = sortedDates[sortedDates.length - 1];
+    
+    const dateRange: Date[] = [];
+    const current = new Date(firstDate);
+    
+    while (current <= lastDate) {
+      // Solo añadir días laborables (lunes a viernes)
+      const dayOfWeek = current.getDay();
+      if (dayOfWeek >= 1 && dayOfWeek <= 5) {
+        // Verificar que no exista reserva para ese día
+        const hasReservation = reservations.some(r => 
+          r.date.toDateString() === current.toDateString()
+        );
+        if (!hasReservation) {
+          dateRange.push(new Date(current));
+        }
+      }
+      current.setDate(current.getDate() + 1);
+    }
+    
+    setSelectedDates(dateRange);
   };
 
   const [isMultiDayModalOpen, setIsMultiDayModalOpen] = useState(false);
@@ -246,9 +278,11 @@ const Index = () => {
                 <MenuCalendar
                   reservations={reservations}
                   onDateClick={handleDateClick}
+                  onReservationClick={handleReservationClick}
                   isMultiSelectMode={isMultiSelectMode}
                   selectedDates={selectedDates}
                   onToggleDateSelection={handleToggleDateSelection}
+                  onSelectDateRange={handleSelectDateRange}
                 />
               </div>
             </div>
@@ -302,6 +336,25 @@ const Index = () => {
 
               {/* Action buttons */}
               <div className="fixed bottom-6 right-6 z-30 flex space-x-3">
+                {selectedDates.length >= 2 && (
+                  <TooltipProvider delayDuration={0}>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          variant="outline"
+                          onClick={handleSelectDateRange}
+                          className="bg-background/95 backdrop-blur-sm border-border hover:bg-accent gap-2"
+                        >
+                          <CalendarRange className="h-4 w-4" />
+                          Seleccionar Rango
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>Selecciona todos los días entre los dos días seleccionados</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                )}
                 <Button 
                   variant="outline" 
                   onClick={handleCancelMultipleSelection}
@@ -328,6 +381,7 @@ const Index = () => {
           onReserve={handleReserve}
           editingReservation={editingReservation}
           onUpdateReservation={handleUpdateReservation}
+          onDeleteReservation={handleDeleteReservation}
         />
 
         <MultiDayReservationModal
@@ -335,6 +389,7 @@ const Index = () => {
           onClose={handleCloseMultiDayModal}
           selectedDates={selectedDates}
           onReserve={handleReserve}
+          onReserveMultiple={handleReserveMultiple}
         />
 
         <DeleteConfirmationDialog

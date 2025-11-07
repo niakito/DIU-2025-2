@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Check, Clock, Utensils, ChevronRight, Calendar } from "lucide-react";
+import { Check, Clock, Calendar } from "lucide-react";
 import { useUser } from "@/contexts/UserContext";
 import {
   Dialog,
@@ -20,17 +20,16 @@ interface MultiDayReservationModalProps {
   isOpen: boolean;
   onClose: () => void;
   selectedDates: Date[];
-  onReserve: (date: Date, menuType: 'normal' | 'hypocaloric') => void;
+  onReserveMultiple: (dates: Date[], menuType: 'normal' | 'hypocaloric') => void;
 }
 
 export const MultiDayReservationModal = ({ 
   isOpen, 
   onClose, 
   selectedDates,
-  onReserve
+  onReserveMultiple
 }: MultiDayReservationModalProps) => {
   const { user } = useUser();
-  const [currentDateIndex, setCurrentDateIndex] = useState(0);
   const [selectedMenuType, setSelectedMenuType] = useState<'normal' | 'hypocaloric'>('normal');
 
   // Auto-llenar con la preferencia del usuario al abrir el modal
@@ -39,13 +38,6 @@ export const MultiDayReservationModal = ({
       setSelectedMenuType(user.preferences.defaultMenuType);
     }
   }, [isOpen, user.preferences.defaultMenuType]);
-
-  // Reset al abrir
-  useEffect(() => {
-    if (isOpen) {
-      setCurrentDateIndex(0);
-    }
-  }, [isOpen]);
 
   const formatDate = (date: Date) => {
     return date.toLocaleDateString('es-ES', { 
@@ -56,32 +48,20 @@ export const MultiDayReservationModal = ({
     });
   };
 
-  const handleReserve = () => {
-    const currentDate = selectedDates[currentDateIndex];
-    onReserve(currentDate, selectedMenuType);
-    
-    if (currentDateIndex < selectedDates.length - 1) {
-      setCurrentDateIndex(prev => prev + 1);
-      // Reset menu selection for next date
-      if (user.preferences.defaultMenuType) {
-        setSelectedMenuType(user.preferences.defaultMenuType);
-      }
-    } else {
-      // Finished all dates
-      onClose();
-      setCurrentDateIndex(0);
-    }
+const handleReserve = () => {
+    onReserveMultiple(selectedDates, selectedMenuType);
+    onClose();
   };
 
-  const currentDate = selectedDates[currentDateIndex];
-  const isLastDate = currentDateIndex === selectedDates.length - 1;
+  if (selectedDates.length === 0) return null;
 
-  if (!currentDate) return null;
+    const firstDate = selectedDates[0];
+    const lastDate = selectedDates[selectedDates.length - 1];
 
-  // Mock menu data - En una app real esto vendría de una API  
-  const mockMenu: MenuItem = {
-    id: `menu-${currentDate.toISOString()}`,
-    date: currentDate,
+    // Mock menu data - En una app real esto vendría de una API  
+    const mockMenu: MenuItem = {
+      id: `menu-${firstDate.toISOString()}`,
+      date: firstDate,
     normal: {
       appetizer: "Ensalada mixta con vinagreta",
       mainCourse: "Pollo a la plancha con arroz pilaf",
@@ -104,11 +84,18 @@ export const MultiDayReservationModal = ({
             <Calendar className="mr-2 h-5 w-5" />
             Reservar Múltiples Días
           </DialogTitle>
-          <DialogDescription className="flex items-center justify-between">
-            <span>{formatDate(currentDate)}</span>
-            <Badge variant="outline" className="text-xs">
-              {currentDateIndex + 1} de {selectedDates.length}
-            </Badge>
+          <DialogDescription>
+            <div className="space-y-1">
+              <div className="flex items-center justify-between">
+                <span className="font-medium">{selectedDates.length} días seleccionados</span>
+                <Badge variant="secondary" className="text-xs">
+                  {formatDate(firstDate).split(',')[0]} - {formatDate(lastDate).split(',')[0]}
+                </Badge>
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Todos los días seleccionados tendrán el mismo menú
+              </p>
+            </div>
           </DialogDescription>
         </DialogHeader>
 
@@ -120,14 +107,17 @@ export const MultiDayReservationModal = ({
           >
             {/* Normal Menu Option */}
             <Card className={`cursor-pointer transition-all duration-200 ${
+              
               selectedMenuType === 'normal' 
                 ? 'ring-2 ring-primary bg-gradient-subtle' 
                 : 'hover:shadow-card'
-            }`}>
+            }`}
+            onClick={() => setSelectedMenuType('normal')}
+            >
               <CardHeader className="pb-2">
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="normal" id="normal" />
-                  <Label htmlFor="normal" className="cursor-pointer flex-1">
+                  <Label htmlFor="normal" className="cursor-pointer flex-1 pointer-events-none">
                     <CardTitle className="text-base flex items-center justify-between">
                       Menú Normal
                       <Badge variant="secondary" className="ml-2">
@@ -157,11 +147,13 @@ export const MultiDayReservationModal = ({
               selectedMenuType === 'hypocaloric' 
                 ? 'ring-2 ring-primary bg-gradient-subtle' 
                 : 'hover:shadow-card'
-            }`}>
+            }`}
+            onClick={() => setSelectedMenuType('hypocaloric')}
+            >
               <CardHeader className="pb-2">
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="hypocaloric" id="hypocaloric" />
-                  <Label htmlFor="hypocaloric" className="cursor-pointer flex-1">
+                  <Label htmlFor="hypocaloric" className="cursor-pointer flex-1 pointer-events-none">
                     <CardTitle className="text-base flex items-center justify-between">
                       Menú Hipocalórico
                       <Badge variant="secondary" className="ml-2 bg-secondary text-secondary-foreground">
@@ -198,20 +190,11 @@ export const MultiDayReservationModal = ({
 
           <div className="flex space-x-2 pt-2">
             <Button variant="outline" onClick={onClose} className="flex-1">
-              Cancelar Todo
+              Cancelar
             </Button>
             <Button onClick={handleReserve} className="flex-1 bg-gradient-primary hover:bg-primary-light">
-              {isLastDate ? (
-                <>
-                  <Check className="mr-2 h-4 w-4" />
-                  Finalizar
-                </>
-              ) : (
-                <>
-                  <ChevronRight className="mr-2 h-4 w-4" />
-                  Siguiente
-                </>
-              )}
+              <Check className="mr-2 h-4 w-4" />
+              Confirmar {selectedDates.length} Reservas
             </Button>
           </div>
         </div>

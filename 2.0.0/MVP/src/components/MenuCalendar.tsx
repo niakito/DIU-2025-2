@@ -10,6 +10,7 @@ import { Reservation } from "@/types/casino";
 interface MenuCalendarProps {
   reservations: Reservation[];
   onDateClick: (date: Date) => void;
+  onReservationClick: (reservation: Reservation) => void;
   isMultiSelectMode?: boolean;
   selectedDates?: Date[];
   onToggleDateSelection?: (date: Date) => void;
@@ -19,6 +20,7 @@ interface MenuCalendarProps {
 export const MenuCalendar = ({ 
   reservations, 
   onDateClick, 
+  onReservationClick,
   isMultiSelectMode = false,
   selectedDates = [],
   onToggleDateSelection,
@@ -171,6 +173,8 @@ export const MenuCalendar = ({
                 onClick={() => {
                   if (isMultiSelectMode && canReserve && !reservation) {
                     onToggleDateSelection?.(date);
+                  } else if (reservation && !isMultiSelectMode) {
+                    onReservationClick(reservation);
                   } else if (canReserve && !isMultiSelectMode) {
                     onDateClick(date);
                   }
