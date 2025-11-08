@@ -8,7 +8,7 @@ Para correrlo, seguir las siguientes instrucciones:
 git clone https://github.com/niakito/DIU-2025-2.git
 
 # 2.- Navegar al directorio del proyecto.
-cd DIU-2025-2/2.0.0
+cd DIU-2025-2/2.0.0/MVP
 
 # 3.- Instalar las dependencias.
 npm install
